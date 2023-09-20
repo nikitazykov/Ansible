@@ -1,0 +1,31 @@
+- hosts: servers_ubuntu
+  become: true
+  become_user: root
+  tasks:
+    # - name: Check dir exist
+    #   stat:
+    #     path: /home/ubuntu/LAMP/www/XXX/
+    #   register: dir_chek
+
+    # - name: Set premmission
+    #   file:
+    #     path: /home/ubuntu/LAMP/www/XXX/storage/framework/
+    #     mode: 0777
+    #     recurse: yes
+    #   when: dir_chek.stat.exists == True
+    #   ignore_errors: true
+
+    - name: On LAMP
+      shell: docker-compose up -d
+      args:
+        chdir: /home/ubuntu/LAMP
+      ignore_errors: true
+
+    # - name: Act LAMP
+    #   shell: docker-compose up -d
+    #   args:
+    #     chdir: /home/ubuntu/LAMP
+    #   ignore_errors: true
+
+#    - name: Start contaner
+#      command: docker start statetsdock

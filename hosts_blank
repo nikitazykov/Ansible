@@ -1,0 +1,5 @@
+[servers_ubuntu]
+XXX.XX:PPP
+
+[servers_centos]
+XXX.XX:PPP

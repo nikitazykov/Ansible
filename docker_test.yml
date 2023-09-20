@@ -1,0 +1,28 @@
+- hosts: servers_ubuntu
+  become: true
+  become_user: root
+  tasks:
+  # - name: Apps
+  #   apt:
+  #     pkg: net-tools
+  #     state: absen
+  #   ignore_errors: true
+
+  # - name: Show dockstarts
+  #   command: docker --version
+
+  # - name: Test main folder
+  #   command: ls LAMP
+
+  - name: Show dockstarts
+    command: docker ps
+
+  - name: Show dockall
+    command: docker ps -a
+
+  # - name: Show docklog
+  #   command: docker logs container_name
+
+  # - name: Test dockstarts
+  #   command: docker images
+  #   ping:

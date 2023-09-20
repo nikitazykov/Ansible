@@ -1,0 +1,23 @@
+- hosts: servers_ubuntu
+  become: true
+  become_user: root
+  tasks:
+    - name: Copy file
+      copy:
+        src: key!
+        dest: /home/ubuntu/.ssh/key
+      ignore_errors: true
+
+    - name: Set premmission
+      file:
+        path: /home/ubuntu/.ssh/key
+        mode: 0600
+      ignore_errors: true
+
+    - name: Clone repository
+      git:
+        repo: git@github.com:nikitazykov_or_your_user/APP.git
+        key_file: /home/ubuntu/.ssh/key
+        dest: /home/ubuntu/LAMP/www/APP
+        accept_hostkey: yes
+      ignore_errors: true

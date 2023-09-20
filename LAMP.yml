@@ -1,0 +1,170 @@
+- hosts: servers_ubuntu
+  become: true
+  become_user: root
+  tasks:
+  - name: 1.0 Update DNS servers
+    shell: echo "nameserver 8.8.8.8" >> resolv.conf
+    args:
+      chdir: /etc
+    ignore_errors: true
+
+  - name: 1.1 Update the apt package index
+    apt:
+      update_cache: yes
+    ignore_errors: true
+
+  - name: 1.2 Install Docker packages
+    apt:
+      name: docker.io
+      state: present
+    ignore_errors: true
+
+  - name: 1.3 Install Docker-compose
+    apt:
+      name: docker-compose
+      state: present
+    ignore_errors: true
+
+  - name: 1.4 Start and enable Docker
+    service:
+      name: docker
+      state: started
+      enabled: yes
+    ignore_errors: true
+
+  - name: 2.1.1 Copy keyN file
+    copy:
+      src: keyN
+      dest: /home/ubuntu/.ssh/keyN
+    ignore_errors: true
+
+  - name: 2.1.2 Set premmission
+    file:
+      path: /home/ubuntu/.ssh/keyN
+      mode: 0600
+    ignore_errors: true
+
+  - name: 2.1.3 Clone repository LAMP
+    git:
+      repo: git@github.com:nikitazykov_or_your_user/LAMP.git
+      key_file: /home/ubuntu/.ssh/keyN
+      dest: /home/ubuntu/LAMP
+      accept_hostkey: yes
+    ignore_errors: true
+
+  - name: 2.1.4 Del keyN file
+    file:
+      path: /home/ubuntu/.ssh/keyN
+      state: absent
+    ignore_errors: true
+
+  - name: 2.2.0 Del old APP
+    file:
+      path: /home/ubuntu/LAMP/www/APP
+      state: absent
+    ignore_errors: true
+
+  - name: 2.2.1 Copy keyN file
+    copy:
+      src: keyM
+      dest: /home/ubuntu/.ssh/keyM
+    ignore_errors: true
+
+  - name: 2.2.2 Set premmission
+    file:
+      path: /home/ubuntu/.ssh/keyM
+      mode: 0600
+    ignore_errors: true
+
+  - name: 2.2.3 Clone repository APP
+    git:
+      repo: git@github.com:nikitazykov_or_your_user/APP.git
+      key_file: /home/ubuntu/.ssh/keyM
+      dest: /home/ubuntu/LAMP/www/APP
+      accept_hostkey: yes
+    ignore_errors: true
+
+  - name: 2.2.4 Del keyM file
+    file:
+      path: /home/ubuntu/.ssh/keyM
+      state: absent
+    ignore_errors: true
+
+  - name: 2.3.1 Copy envfinaws file
+    copy:
+      src: envfinaws
+      dest: /home/ubuntu/LAMP/www/APP/.env
+    ignore_errors: true
+
+  - name: 3.1.1 Check Bin dir exist
+    stat:
+      path: /home/ubuntu/LAMP/www/APP/
+    register: dir_chek_bin
+
+  - name: 3.1.2 Check Fin dir exist
+    stat:
+      path: /home/ubuntu/LAMP/www/APP/
+    register: dir_chek_fin
+
+  - name: 3.2.1 Set APP premmission framework
+    file:
+      path: /home/ubuntu/LAMP/www/APP/storage/framework/
+      mode: 0777
+      recurse: yes
+    when: dir_chek_bin.stat.exists == True
+    ignore_errors: true
+
+  - name: 3.2.2 Set Bin premmission logs
+    file:
+      path: /home/ubuntu/LAMP/www/APP/storage/logs/
+      mode: 0777
+      recurse: yes
+    when: dir_chek_bin.stat.exists == True
+    ignore_errors: true
+
+  - name: 3.2.3 Set Fin premmission framework
+    file:
+      path: /home/ubuntu/LAMP/www/APP/storage/framework/
+      mode: 0777
+      recurse: yes
+    when: dir_chek_fin.stat.exists == True
+    ignore_errors: true
+
+  - name: 3.2.4 Set Fin premmission logs
+    file:
+      path: /home/ubuntu/LAMP/www/APP/storage/logs/
+      mode: 0777
+      recurse: yes
+    when: dir_chek_fin.stat.exists == True
+    ignore_errors: true
+
+  - name: 3.2.5 Set Fin premmission vendor
+    file:
+      path: /home/ubuntu/LAMP/www/APP/vendor/
+      mode: 0777
+      recurse: yes
+    when: dir_chek_fin.stat.exists == True
+    ignore_errors: true
+
+  - name: 3.2.6 Set Fin premmission bootstrap
+    file:
+      path: /home/ubuntu/LAMP/www/APP/bootstrap/
+      mode: 0777
+      recurse: yes
+    when: dir_chek_fin.stat.exists == True
+    ignore_errors: true
+
+  - name: 4 Act LAMP <6,5min
+    shell: docker-compose up -d
+    args:
+      chdir: /home/ubuntu/LAMP
+    timeout: 390
+    ignore_errors: true
+
+  - name: 5.1 PHP phar Upd APP
+    shell: docker exec /bin_short-php82 sh -c "cd /var/www/html/APP/ && php composer.phar update -n"
+    ignore_errors: true
+
+  - name: 5.2 PHP migrate APP
+    shell: docker exec /bin_short-php82 sh -c "cd /var/www/html/APP/ && php artisan migrate -n"
+    ignore_errors: true

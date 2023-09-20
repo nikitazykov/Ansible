@@ -1,0 +1,33 @@
+- hosts: servers_ubuntu
+  become: true
+  become_user: root
+  tasks:
+  # - name: Del folder
+  #   file:
+  #     path: /home/ubuntu/LAMP/data/
+  #     state: absent
+
+  #  - name: Del image1
+  #    command: docker image rm image_id_1 -f
+  #    ignore_errors: true
+
+  #  - name: Del image2
+  #    command: docker image rm image_id_2 -f
+  #    ignore_errors: true
+
+  #  - name: Del image3
+  #    command: docker image rm image_id_3 -f
+  #    ignore_errors: true
+
+  #  - name: Del image4
+  #    command: docker image rm image_id_4 -f
+  #    ignore_errors: true
+
+    # - name: Stop dockcomp
+    #   command: docker-compose down
+    #   args:
+    #     chdir: ./LAMP
+
+    # - name: Del dockcomp
+    #   command: docker rm container_name -f
+    #   ignore_errors: true

@@ -1,0 +1,16 @@
+- hosts: servers_ubuntu
+  become: true
+  become_user: root
+  tasks:
+    - name: Install some tools
+      apt:
+        pkg: dash
+        state: latest
+      ignore_errors: true
+
+    - name: Del some tools
+      apt:
+        pkg: dash
+        state: absent
+        force: yes
+      ignore_errors: true
