@@ -1,0 +1,167 @@
+# - hosts: loadbalancer
+- hosts: ubuntu_d0_demo1
+  become: true
+  become_user: root
+  # vars:
+  #   PRJCT: "pocketbook"
+  #   BLD: "{{ inventory_hostname | regex_replace('TestLB','') }}"
+  tasks:
+
+  # - name: Удаление файлов
+  #   file:
+    #     path: "{{ item }}"
+    #     state: absent
+    #   loop:
+    #     - /server/frontjs
+    #     - /server/{{ PRJCT }}
+    #     - /server/front.{{ PRJCT }}.ru
+    # become: yes
+
+  # - name: Создание папки
+  #   command: mkdir -p /server/blank-docker-all
+  #   become: yes
+  
+  # - name: Копирование файла на сервер
+  #   copy:
+  #     src: /root/ansible/first.sh
+  #     dest: /server/blank-docker-all/first.sh
+  #     # remote_src: no
+  #     # mode: 0644
+  #     mode: 755
+  #   become: true
+
+  # - name: Выполнение bash-скрипта first
+  #   command: bash /server/blank-docker-all/first.sh {{ PRJCT }}
+  #   become: yes
+
+  # - name: Копирование файлов на сервер
+  #   copy:
+  #     src: /root/ansible/del_back_load.sh
+  #     dest: /server/blank-docker-all/del_back_load.sh
+  #     # remote_src: no
+  #     # mode: 0644
+  #     mode: 0770
+  #     # owner: "{{ BLD }}-{{ PRJCT }}"
+  #     # group: "{{ BLD }}-{{ PRJCT }}"
+  #     owner: "1500"
+  #     group: "1500"
+  #   become: true
+
+  # - name: Копирование ключа на сервер
+  #   copy:
+  #     src: /root/ansible/id_rsa
+  #     dest: /root/.ssh/id_rsa
+  #     # remote_src: no
+  #     # mode: 0644
+  #     mode: 400
+  #   become: yes
+
+  - name: 0Команда в терминале
+    command: git pull
+    args:
+      chdir: /server/blank-docker-all
+  # node{{ BLD }}/config
+    become: yes
+
+  # - name: 1Команда в терминале
+  #   command: rm .git -R
+  #   args:
+  #     chdir: /server/blank-docker-all
+  # # node{{ BLD }}/config
+  #   become: yes
+
+  # - name: 2Команда в терминале
+  #   command: git clone git@gitlab.dreamte.ru:docker/{{ inventory_hostname }}/blank-docker-all.git -b {{ inventory_hostname }}
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #   become: yes
+
+  # - name: 3Команда в терминале
+  #   command: mv /server/blank-docker-all/blank-docker-all/.git /server/blank-docker-all/.git 
+  #   # args:
+  #   #   chdir: /server/blank-docker-all
+  #   become: yes
+
+  # - name: 4Команда в терминале
+  #   command: rm /server/blank-docker-all/blank-docker-all -R 
+  #   # args:
+  #   #   chdir: /server/blank-docker-all
+  #   become: yes
+
+  # - name: Dpkg
+  #   command: dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb
+  #   # args:
+  #   #   chdir: /server/pocketbook/node{{ BLD }}/config
+  #   become: yes
+
+  # - name: UPD
+  #   command: apt-get update
+  #   # args:
+  #   #   chdir: /server/pocketbook/node{{ BLD }}/config
+  #   become: yes
+  
+
+  # - name: Остановка cli
+  #   command: docker rm  -f gluster-cli-pocketbook-node{{ BLD }}
+  #   # args:
+  #   #   chdir: /server/pocketbook/node{{ BLD }}/config
+  #   become: yes
+
+  # - name: Остановка serv
+  #   command: docker rm  -f gluster-serv-pocketbook-node{{ BLD }}
+  #   # args:
+  #   #   chdir: /server/pocketbook/node{{ BLD }}/config
+  #   become: yes
+
+  # - name: Запуск gluster
+  #   command: systemctl start glusterd
+  #   # args:
+  #   #   chdir: /server/pocketbook/node{{ BLD }}/config
+  #   become: yes
+
+  # - name: Активация gluster
+  #   command: systemctl enable glusterd
+  #   # args:
+  #   #   chdir: /server/pocketbook/node{{ BLD }}/config
+    # become: yes
+    
+  # - name: Удаление файлов
+  #   file:
+  #       path: /server/pocketbook/node{{ BLD }}/tmp/.*
+  #       state: absent
+  #   become: yes
+
+  # - name: Активация SSH
+  #   shell: eval $(ssh-agent)
+
+  # - name: Добавления gitlab в доверенные узлы
+  #   command: "ssh-keyscan -H gitlab.dreamte.ru >> ~/.ssh/known_hosts"
+  #   become: yes
+
+  # - name: Выполнение bash-скрипта init
+  #   command: bash /server/blank-docker-all/init00all.sh node{{ BLD }} {{ PRJCT }} > /root/init.log 2>&1 &
+  #   become: yes
+  #   register: init_output
+
+  # - name: Вывод результатов выполнения скрипта init
+  #   debug:
+  #     var: init_output.stdout_lines
+
+# ----------------------
+
+  #  - name: Del image1
+  #    command: docker image rm image_id_1 -f
+  #    ignore_errors: true
+
+  #  - name: Del image2
+  #    command: docker image rm image_id_2 -f
+  #    ignore_errors: true
+
+    # - name: Stop dockcomp
+    #   command: docker-compose down
+    #   args:
+    #     chdir: ./LAMP
+
+    # - name: Del dockcomp
+    #   command: docker rm container_name -f
+    #   ignore_errors: true

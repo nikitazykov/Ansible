@@ -1,0 +1,116 @@
+# - hosts: loadbalancer
+- hosts: ubuntu_d0_demo
+  become: true
+  become_user: root
+  tasks:
+
+  - name: 01) Копирование ключа на сервер
+    copy:
+      src: /root/ansible/id_rsa
+      dest: /root/.ssh/id_rsa
+      # remote_src: no
+      # mode: 0644
+      mode: 0400
+    become: yes
+
+  - name: 02) Копирование ключа на сервер
+    copy:
+      src: /root/ansible/id_rsa.pub
+      dest: /root/.ssh/id_rsa.pub
+      # remote_src: no
+      # mode: 0644
+      mode: 0400
+    become: yes
+
+  - name: 03) Копирование ключа на сервер
+    command: ssh -o StrictHostKeyChecking=no git@gitlab.dreamte.ru
+    become: yes
+    ignore_errors: yes
+
+  # - name: 11) Удаление git папки
+  #   command: rm .git -R
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - name: 12) Удаление blank папки
+  #   command: rm blank-docker-all -R
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - name: 2) Копирование репы
+  #   command: git clone git@gitlab.dreamte.ru:docker/{{ inventory_hostname }}/blank-docker-all.git -b {{ inventory_hostname }}
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - name: 3) Перемещение git папки
+  #   command: mv /server/blank-docker-all/blank-docker-all/.git /server/blank-docker-all/.git 
+  #   become: yes
+  #   ignore_errors: yes
+    
+  # - name: 41) Установка прав
+  #   command: chown 1500:1500 /server/blank-docker-all -R
+  #   args:
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+    
+  # - name: 42) Установка прав
+  #   command: chmod 770 /server/blank-docker-all -R
+  #   args:
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+    
+  # - name: 5) Удаление старой папки
+  #   command: rm /server/blank-docker-all/blank-docker-all -R 
+  #   args:
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - name: 6) Добавление старых файлов
+  #   command: git add .
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - name: 7) Коммит старых файлов
+  #   command: git commit -m "Init old [ci skip]"
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+
+  # - name: 8) Push старых файлов
+  #   command: git push
+  #   args:
+  #     chdir: /server/blank-docker-all
+  #     warn: false
+  #   become: yes
+  #   ignore_errors: yes
+
+
+  - name: 10) Выполнение обновления папки с репы
+    command: git pull
+    args:
+      chdir: /server/blank-docker-all
+    become: yes
+    ignore_errors: yes
+  
+  - name: 0) Удаление ключа на сервее
+    command: rm /root/.ssh/id_rsa
+    args:
+      warn: false
+    become: yes
+    ignore_errors: yes

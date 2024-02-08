@@ -1,0 +1,398 @@
+version: "3.8"
+services:
+  php:
+    build: 
+      context: ${PRJCT_DIR}/config/php/8.2
+      args:
+        UID: ${UID}
+        GID: ${GID}
+        UUID: ${UUID}
+        GGID: ${GGID}
+        SSH: ${SSH}
+        HOSTS: ${HOSTS}
+        HOSTSa: ${HOSTSa}
+        SMTP_HOST: ${SMTP_HOST}
+        SMTP_PORT: ${SMTP_PORT}
+        SMTP_EMAIL: ${SMTP_USER}
+        SMTP_PASSWORD: ${SMTP_PASSWORD}
+    image: php_${BLD}:8.2.9
+    container_name: php-${PRJCT}-${BLD}
+    expose:
+      - 9000
+    volumes:
+      - ${PRJCT_DIR}/tmp:/var/www/tmp
+      - ${PRJCT_DIR}/project/env:/var/www/env
+      - ${PRJCT_DIR}/project/static:/var/www/html
+      - ${PRJCT_DIR}/project/local:/var/www/html/local
+      - ${PRJCT_DIR}/project/bitrix:/var/www/html/bitrix
+      - ${PRJCT_DIR}/../upload:/var/www/html/upload
+
+
+      - ${PRJCT_DIR}/config/php:/usr/local/etc/php
+      - ${PRJCT_DIR}/config/private/mysqld:/var/run/mysqld
+      - ${PRJCT_DIR}/logs/php:/var/log/php
+      - ${PRJCT_DIR}/logs/msmtp:/var/log/msmtp
+      - ${PRJCT_DIR}/config/private/.ssh:/root/.ssh
+    logging:
+      driver: json-file
+      options:
+        max-size: '100m'
+        max-file: '5'
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    # ports:
+    #   - "${XDEBUG_PORT}:9000"
+    networks:
+      my_network:
+    restart: unless-stopped
+
+  # mysql:
+  #   image: percona/percona-xtradb-cluster:5.7
+  #   # image: mysql:5.7
+  #   container_name: mysql-${PRJCT}-${BLD}
+  #   ports:
+  #     # - "${MYSQL_PORT}:3306"
+  #     - "3306:3306"
+  #     - "4567:4567"
+  #   environment:
+  #     MYSQL_DATABASE: ${MYSQL_USER}
+  #     # MYSQL_USER: ${MYSQL_USER}
+  #     # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     # FkcohH5TjdQknYtsER35gBDJmp9H
+  #     CLUSTER_NAME: ${CLUSTER_NAME}
+  #     # CLUSTER_JOIN: 191.186.199.185
+  #     # wsrep_cluster_address: gcomm://191.186.199.185,191.186.199.161,178.253.43.51
+  #     # wsrep_node_name: node1
+  #     # wsrep_node_address: 191.186.199.161
+  #     # XTRABACKUP_PASSWORD: ${XTRABACKUP_PASSWORD}
+  #     TZ: Europe/Moscow
+  #   network_mode: host
+  #   volumes:
+  #     # - ${PRJCT_DIR}/config/mysql/my.cnf:/etc/mysql/node.cnf
+  #     - ${PRJCT_DIR}/config/private/mysql-data:/var/lib/mysql
+  #     - ${PRJCT_DIR}/config/private/mysqld:/var/run/mysqld
+  #     - ${PRJCT_DIR}/config/private/ssl:/etc/cert
+  #     - ${PRJCT_DIR}/logs/mysql:/var/log/mysql
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /etc/timezone:/etc/timezone:ro
+  #   # command: "--wsrep-new-cluster"
+  #   # command: "--wsrep_cluster_address=gcomm://test1lb.pocketbook.ru"
+  #   # networks:
+  #   #   my_network:
+  #   #   local_sub:
+
+  mysql1:
+    image: percona/percona-xtradb-cluster:5.7
+    # image: mysql:5.7
+    container_name: mysql1-${PRJCT}-${BLD}
+    # ports:
+    #   # - "${MYSQL_PORT}:3306"
+    #   - "3306:3306"
+    #   - "4567:4567"
+    environment:
+      # MYSQL_DATABASE: ${MYSQL_USER}
+      # MYSQL_USER: ${MYSQL_USER}
+      # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # FkcohH5TjdQknYtsER35gBDJmp9H
+      CLUSTER_NAME: ${CLUSTER_NAME}
+      # CLUSTER_JOIN: 191.186.199.185
+      # wsrep_cluster_address: gcomm://191.186.199.185,191.186.199.161,178.253.43.51
+      # wsrep_node_name: node1
+      # wsrep_node_address: 191.186.199.161
+      # XTRABACKUP_PASSWORD: ${XTRABACKUP_PASSWORD}
+      TZ: Europe/Moscow
+    # network_mode: host
+    # volumes:
+    #   # - ${PRJCT_DIR}/config/mysql/my.cnf:/etc/mysql/node.cnf
+    #   - ${PRJCT_DIR}/config/private/mysql-data:/var/lib/mysql
+    #   - ${PRJCT_DIR}/config/private/mysqld:/var/run/mysqld
+    #   - ${PRJCT_DIR}/config/private/ssl:/etc/cert
+    #   - ${PRJCT_DIR}/logs/mysql:/var/log/mysql
+    #   - /etc/localtime:/etc/localtime:ro
+    #   - /etc/timezone:/etc/timezone:ro
+    # command: "--wsrep-new-cluster"
+    # command: "--wsrep_cluster_address=gcomm://test1lb.pocketbook.ru"
+    # networks:
+    #   my_network:
+      local_sub:
+
+  mysql2:
+    image: percona/percona-xtradb-cluster:5.7
+    # image: mysql:5.7
+    container_name: mysql2-${PRJCT}-${BLD}
+    # ports:
+    #   # - "${MYSQL_PORT}:3306"
+    #   - "3306:3306"
+    #   - "4567:4567"
+    environment:
+      # MYSQL_DATABASE: ${MYSQL_USER}
+      # MYSQL_USER: ${MYSQL_USER}
+      # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # FkcohH5TjdQknYtsER35gBDJmp9H
+      CLUSTER_NAME: ${CLUSTER_NAME}
+      CLUSTER_JOIN: mysql1 # 191.186.199.185
+      # wsrep_cluster_address: gcomm://191.186.199.185,191.186.199.161,178.253.43.51
+      # wsrep_node_name: node1
+      # wsrep_node_address: 191.186.199.161
+      # XTRABACKUP_PASSWORD: ${XTRABACKUP_PASSWORD}
+      TZ: Europe/Moscow
+    # network_mode: host
+    # volumes:
+    #   # - ${PRJCT_DIR}/config/mysql/my.cnf:/etc/mysql/node.cnf
+    #   - ${PRJCT_DIR}/config/private/mysql-data:/var/lib/mysql
+    #   - ${PRJCT_DIR}/config/private/mysqld:/var/run/mysqld
+    #   - ${PRJCT_DIR}/config/private/ssl:/etc/cert
+    #   - ${PRJCT_DIR}/logs/mysql:/var/log/mysql
+    #   - /etc/localtime:/etc/localtime:ro
+    #   - /etc/timezone:/etc/timezone:ro
+    # command: "--wsrep-new-cluster"
+    # command: "--wsrep_cluster_address=gcomm://test1lb.pocketbook.ru"
+    # networks:
+    #   my_network:
+      local_sub:
+
+  mysql3:
+    image: percona/percona-xtradb-cluster:5.7
+    # image: mysql:5.7
+    container_name: mysql3-${PRJCT}-${BLD}
+    # ports:
+    #   # - "${MYSQL_PORT}:3306"
+    #   - "3306:3306"
+    #   - "4567:4567"
+    environment:
+      # MYSQL_DATABASE: ${MYSQL_USER}
+      # MYSQL_USER: ${MYSQL_USER}
+      # MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # FkcohH5TjdQknYtsER35gBDJmp9H
+      CLUSTER_NAME: ${CLUSTER_NAME}
+      CLUSTER_JOIN: mysql1 # 191.186.199.185
+      # wsrep_cluster_address: gcomm://191.186.199.185,191.186.199.161,178.253.43.51
+      # wsrep_node_name: node1
+      # wsrep_node_address: 191.186.199.161
+      # XTRABACKUP_PASSWORD: ${XTRABACKUP_PASSWORD}
+      TZ: Europe/Moscow
+    # network_mode: host
+    # volumes:
+    #   # - ${PRJCT_DIR}/config/mysql/my.cnf:/etc/mysql/node.cnf
+    #   - ${PRJCT_DIR}/config/private/mysql-data:/var/lib/mysql
+    #   - ${PRJCT_DIR}/config/private/mysqld:/var/run/mysqld
+    #   - ${PRJCT_DIR}/config/private/ssl:/etc/cert
+    #   - ${PRJCT_DIR}/logs/mysql:/var/log/mysql
+    #   - /etc/localtime:/etc/localtime:ro
+    #   - /etc/timezone:/etc/timezone:ro
+    # command: "--wsrep-new-cluster"
+    # command: "--wsrep_cluster_address=gcomm://test1lb.pocketbook.ru"
+    # networks:
+    #   my_network:
+      local_sub:
+
+
+  proxysql:
+    image: percona/proxysql:1.4.16
+    container_name: proxysql-${PRJCT}-${BLD}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PROXY_USER: ${PSQL_USER}
+      MYSQL_PROXY_PASSWORD: ${PSQL_PASSWORD}
+      CLUSTER_NAME: ${CLUSTER_NAME}
+      # ETCD_HOST: $(curl -s ifconfig.co)
+    volumes:
+      - ${PRJCT_DIR}/config/mysql/proxysql.cnf:/etc/proxysql.cnf
+      - ${PRJCT_DIR}/config/private/ssl:/etc/ssl
+      # - ${PRJCT_DIR}/config/private/ssl:/etc/ssl
+      # - ${PRJCT_DIR}/config/private/ssl:/etc/ssl
+    ports:
+      - "${PSQL1_PORT}:6032"
+      - "${PSQL2_PORT}:6033"
+    #   - "${PSQL3_PORT}:6070"
+    depends_on:
+      - mysql
+    networks:
+      my_network:
+
+  # phpmyadmin:
+  #   image: phpmyadmin:5.2.1
+  #   user: root
+  #   container_name: phpmyadmin-${PRJCT}-${BLD}
+  #   links:
+  #     - mysql
+  #   depends_on:
+  #     - mysql
+  #   environment:
+  #     PMA_HOST: mysql
+  #     PMA_PORT: 3306
+  #     # PMA_USER: root
+  #     # PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #     UPLOAD_LIMIT: 2000M
+  #   ports:
+  #     - "${PMA_PORT}:80"
+  #     - "${PMA_PORTs}:8443"
+  #   volumes:
+  #     - /sessions
+  #     # - ${PRJCT_DIR}/config/php/php.ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+  #   networks:
+  #     my_network:
+  #   restart: unless-stopped
+
+  # exporter:
+  #   image: prom/node-exporter:v1.6.0
+  #   container_name: exporter-${PRJCT}-${BLD}
+  #   # ports:
+  #   #   - :9100
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #   command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.rootfs=/rootfs'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+  #   restart: always
+  #   networks:
+  #     my_network:
+  #     local_sub:
+
+  # promtail:
+  #   image: grafana/promtail:2.8.2
+  #   container_name: promtail-${PRJCT}-${BLD}
+  #   # user: "${UID}:${GID}"
+  #   volumes:
+  #     - /server/${PRJCT}/config/promtail/promtail-config.yml:/etc/promtail/config.yml
+  #     - /var/log:/var/log:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+      # - ${PRJCT_DIR}/..:/server/${PRJCT}:ro
+      # - ${PRJCT_DIR}/../../nginx-proxy/logs:/server/nginx-proxy/logs:ro
+  #   restart: always
+  #   networks:
+  #     my_network:
+
+  # cloudstorage:
+  #   image: efrecon/s3fs:1.90
+  #   container_name: cloudstorage-${PRJCT}-${BLD}
+  #   user: "0:${GID}"
+  #   cap_add:
+  #     - SYS_ADMIN
+  #   security_opt:
+  #     - "apparmor:unconfined"
+  #   devices:
+  #     - /dev/fuse
+  #   environment:
+  #     AWS_S3_BUCKET: ${S3_BUCKET}
+  #     AWS_S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+  #     AWS_S3_SECRET_ACCESS_KEY: ${S3_SECRET_KEY}
+  #     AWS_S3_URL: ${S3_URL}
+  #     AWS_S3_MOUNT: "/opt/s3fs/bucket"
+  #     UID: ${UID}
+  #     GID: ${GID}
+  #     S3FS_DEBUG: 1
+  #     S3FS_ARGS: "use_path_request_style"
+  #   volumes:
+      # - /home/${BLD}-${PRJCT}/backups:/opt/s3fs/bucket:rshared/
+  #   restart: unless-stopped
+  #   networks:
+  #     my_network:
+
+  memcached:
+    image: memcached:1.6.22
+    container_name: memcached-${PRJCT}-${BLD}
+    volumes:
+      - ${PRJCT_DIR}/config/memcached/memcached.conf:/etc/memcached.conf
+    ports:
+      - "${MEMC_PORT}:11211"
+    networks:
+      my_network:
+
+  gluster-server:
+    image: gluster/gluster-centos
+    container_name: gluster-serv-${PRJCT}-${BLD}
+    # user: '${UID}:${GID}'
+    privileged: true
+    # environment:
+      # GLUSTER_SERVER_NAME: gluster-server-${BLD}
+      # GLUSTERD_VOL: /data/
+    # cap_add:
+    #   - SYS_ADMIN
+    volumes:
+      - ${PRJCT_DIR}/config/private/gluster:/data
+      - ${PRJCT_DIR}/config/gluster:/var/lib/glusterd
+      - ${PRJCT_DIR}/logs/glusterfs:/var/log/glusterfs
+    ports:
+      - "24007:24007"
+      - "49152:49152"
+    # command: ["server", "/data"]
+    # command: "/usr/sbin/init"
+    command: ["bash", "-c", "glusterd && tail -f /dev/null"]
+    networks:
+      my_network:
+
+  gluster-client:
+    image: gluster/gluster-centos:gluster4u0_centos7
+    container_name: gluster-cli-${PRJCT}-${BLD}
+    # user: '${UID}:${GID}'
+    privileged: true
+    # environment:
+      # GLUSTER_SERVER_NAME: gluster-client-${BLD}
+      # GLUSTERD_VOL: /data/
+    # cap_add:
+    #   - SYS_ADMIN
+    # volumes:
+    #   - ${PRJCT_DIR}/config/gluster:/data
+    #   - ${PRJCT_DIR}/logs/glusterfs:/var/log/glusterfs
+    # ports:
+    #   - "24000:24007"
+    # command: ["client", "/data"]
+    # command: "/usr/sbin/init"
+    command: ["bash", "-c", "glusterd && tail -f /dev/null"]
+    depends_on:
+      - gluster-server
+    networks:
+      my_network:
+
+  nginx:
+    image: nginx:1.23-alpine
+    container_name: nginx-${PRJCT}-${BLD}
+    links:
+      - php
+    depends_on:
+      - php
+    volumes:
+      - ${PRJCT_DIR}/tmp:/var/www/tmp
+      - ${PRJCT_DIR}/project/env:/var/www/env
+      - ${PRJCT_DIR}/project/static:/var/www/html
+      - ${PRJCT_DIR}/project/local:/var/www/html/local
+      - ${PRJCT_DIR}/project/bitrix:/var/www/html/bitrix
+      - ${PRJCT_DIR}/../upload:/var/www/html/upload
+
+
+      - ${PRJCT_DIR}/config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${PRJCT_DIR}/config/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ${PRJCT_DIR}/logs/nginx:/var/log/nginx
+      - ${PRJCT_DIR}/config/private/ssl:/etc/nginx/ssl:ro
+    # ports:
+    #   - "${NGINX_PORT}:80"
+    #   - "${NGINX_PORTS}:443"
+    expose:
+      - 443
+    networks:
+      my_network:
+      local_sub:
+    restart: unless-stopped
+
+networks:
+  local_sub:
+    external: true
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: $SUB

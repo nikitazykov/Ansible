@@ -1,21 +1,66 @@
-- hosts: ubuntu_d0
+- hosts: ubuntu_d0_demo1
   become: true
   become_user: root
+  vars:
+    node_numbers:
+      - "dev1"
+      - "dev2"
+      - "dev3"
+      - "dev4"
+      - "dev5"
+      - "demo"
+      - "prod"
+      - "stage"
   tasks:
 
-  - name: Обновление списка пакетов
-    apt:
-      update_cache: yes
+  # - name: Set_permissions1
+  #   command: "chmod 775 /server/{{ inventory_hostname }}/{{ item }}/config/docker-compose.yml"
+  #   loop: "{{ node_numbers }}"
+  #   become: yes
 
-  - name: Установка Python 3 на сервер
-    apt:
-      name: python3
-      state: present 
-    become: yes
+  # - name: Set_permissions2
+  #   command: "chmod 775 /server/{{ inventory_hostname }}/{{ item }}/config/php/8.2/Dockerfile"
+  #   loop: "{{ node_numbers }}"
+  #   become: yes
+
+  # - name: Set_permissions3
+  #   command: "chmod 775 /server/{{ inventory_hostname }}/{{ item }}/config/php/7.4/Dockerfile"
+  #   loop: "{{ node_numbers }}"
+  #   become: yes
+
+  # - name: Replace string in file
+  #   ansible.builtin.replace:
+  #     path: "/server/{{ inventory_hostname }}/{{ item }}/config/docker-compose.yml"
+  #     regexp: '7.4.33'
+  #     replace: '7.4'
+  #   loop: "{{ node_numbers }}"
+  #   become: true
+
+  # - name: Copy to serv
+  #   copy:
+  #     src: /root/ansible/upd_packs.sh
+  #     dest: /server/{{ inventory_hostname }}/{{ item }}/config/php/upd_packs.sh
+  #     owner: "{{ item }}-{{ inventory_hostname }}"
+  #     group: "{{ item }}-{{ inventory_hostname }}"
+  #     # remote_src: no
+  #     # mode: 0644
+  #     mode: 755
+  #   become: true
+  #   loop: "{{ node_numbers }}"
+
+  # - name: Обновление списка пакетов
+  #   apt:
+  #     update_cache: yes
+
+  # - name: Установка Python 3 на сервер
+  #   apt:
+  #     name: python3
+  #     state: present 
+  #   become: yes
     
-  - name: Переопределить интерпретатор Python
-    set_fact:
-      ansible_python_interpreter: /usr/bin/python3
+  # - name: Переопределить интерпретатор Python
+  #   set_fact:
+  #     ansible_python_interpreter: /usr/bin/python3
       
   # - name: Del folder
   #   file:
@@ -28,14 +73,6 @@
 
   #  - name: Del image2
   #    command: docker image rm image_id_2 -f
-  #    ignore_errors: true
-
-  #  - name: Del image3
-  #    command: docker image rm image_id_3 -f
-  #    ignore_errors: true
-
-  #  - name: Del image4
-  #    command: docker image rm image_id_4 -f
   #    ignore_errors: true
 
     # - name: Stop dockcomp
