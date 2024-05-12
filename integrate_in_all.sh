@@ -65,7 +65,7 @@ for subfolder in "${subfolders[@]}"; do
             # mv blank-docker-all/.git ./.git
             # rm blank-docker-all -R
 
-        elif [[ "$push" = '/push' ]]; then
+        elif [[ "$push" != '/' ]]; then
             # Делаем push
             cd $subfolder
             git config user.name "Никита Зыков"
