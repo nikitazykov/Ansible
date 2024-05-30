@@ -1,0 +1,19 @@
+- hosts: ubuntu_devx
+# - hosts: ubuntu_prod
+# - hosts: ubuntu_pb_lb
+  become: true
+  become_user: root
+  tasks:
+
+  - name: 01) Копирование файла json
+    copy:
+      src: /root/ansible/daemon.json
+      dest: /etc/docker/daemon.json
+      # remote_src: no
+      # mode: 0644
+      # mode: 0400
+    become: yes
+
+  - name: 02) Активация зеркала
+    command: systemctl reload docker
+    become: yes
